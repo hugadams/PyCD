@@ -1,5 +1,8 @@
 ### Methods in particluar to making custom domain analysis.  Not general, core methods. ###
-from utils import sortbyarg
+
+sys.path.append('/home/glue/Dropbox/pyrecords')
+from Utilities.utils import sortbyarg  #From pyrecords
+
 from operator import attrgetter
 from itertools import ifilter
 from collections import namedtuple
