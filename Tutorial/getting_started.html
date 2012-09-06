@@ -1,0 +1,145 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; PyCD 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="PyCD 0.1 documentation" href="../index.html" />
+    <link rel="next" title="API" href="../API/pycd.html" />
+    <link rel="prev" title="Welcome to PyCD’s documentation!" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/gwu.jpg" border="100" alt="sampledoc"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../API/pycd.html" title="API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to PyCD’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+       <li><a href="../contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#introduction-to-containers-and-records">Introduction to containers and records:</a></li>
+<li><a class="reference internal" href="#immutable-containers">Immutable containers:</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to PyCD&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../API/pycd.html"
+                        title="next chapter">API</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/Tutorial/getting_started.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-to-containers-and-records">
+<h2>Introduction to containers and records:<a class="headerlink" href="#introduction-to-containers-and-records" title="Permalink to this headline">¶</a></h2>
+<p>Good programs always start by managing data in a flexible and robust manner. Python has great builtin container datatypes (lists, tuples, dictionaries), but often, we need to go beyond these and create flexible data handlers which are custom-fitted to our analysis. To this end, the programmer really does become an architect, and a myriad of possible approaches are applicable. This is a double-edged sword, though, as inexperienced coders (like me) will tend to go down the wrong avenues, and implement poor solutions. Emerging from such a trajectory, PyRecords is an attempt to ease the suffering.</p>
+</div>
+<div class="section" id="immutable-containers">
+<h2>Immutable containers:<a class="headerlink" href="#immutable-containers" title="Permalink to this headline">¶</a></h2>
+<p>As far as immutable containers go, Python already has a nice builtin type for managing records- the underused <a class="reference external" href="http://docs.python.org/library/collections.html#collections.namedtuple">namedtuple</a>. A namedtuple is an immutable array container just like a normal tuple, except namedtuples have field designations. Therefore, elements can be accessed by attribute lookup and itemlookup (ie x.a or x[0]); whereas, tuples have no concept of attribute lookup. Namedtuples are a really great option for storing custom datatypes for these reasons:</p>
+<ul class="simple">
+<li>They are lightweight (take up very little memory).</li>
+<li>They are easily interfaced to file or sql database I/O, but also can be declared in-code.</li>
+<li>They have many basic builtin utilities for quick container transformations (nametuple to dict for example).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../API/pycd.html" title="API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to PyCD’s documentation!"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+       <li><a href="../contents.html">documentation </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Adam Hughes.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
