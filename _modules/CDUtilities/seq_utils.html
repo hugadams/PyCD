@@ -1,0 +1,161 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CDUtilities.seq_utils &mdash; PyCD 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="PyCD 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../index.html"><img src="../../_static/gwu_spu.jpg" border="100" alt="sampledoc"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+       <li><a href="../../contents.html">documentation </a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for CDUtilities.seq_utils</h1><div class="highlight"><pre>
+<span class="c">### Utilities for handling protein sequence data that </span>
+<span class="c">### may or may not already be built into the biopython framework.</span>
+<span class="c">### Mostly these are for convienence</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">SeqIO</span>
+<span class="kn">from</span> <span class="nn">Bio.Alphabet</span> <span class="kn">import</span> <span class="n">generic_protein</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;/home/glue/Dropbox/pyrecords&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">Utilities.utils</span> <span class="kn">import</span> <span class="n">to_dic</span>  <span class="c">#From pyrecords</span>
+
+<span class="c">### Makes a dictionary keyed by protein id from SeqIO.parse.  Parse returns a tuple with count and seq object</span>
+<span class="c">### for example (0, Seq0), (1, Seq1).  We then are taking the second field (Seq) and keying a dictionary by id attribute.</span>
+
+<div class="viewcode-block" id="protein_file"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.seq_utils.protein_file">[docs]</a><span class="k">def</span> <span class="nf">protein_file</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="s">&#39;fasta&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Reads in a protein file and returns all seq records as iterable. Easy to key later using</span>
+<span class="sd">    my records utilities.&#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">record</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">record</span> \
+         <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">SeqIO</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">),</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">generic_protein</span><span class="p">))])</span>  <span class="c">#Method autostrips the &#39;&gt;&#39;</span>
+
+</div>
+<div class="viewcode-block" id="assign_dom_seq"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.seq_utils.assign_dom_seq">[docs]</a><span class="k">def</span> <span class="nf">assign_dom_seq</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="n">seqrecords</span><span class="p">,</span> <span class="n">warning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Method takes in domain iterable as well as sequences and returns subclasses (either mutable or immutable)</span>
+<span class="sd">       that have a new field.  For now, domains must be a list of domain objects and sequences must be list of</span>
+<span class="sd">       sequence records.  Comparison is done through the name attribute.  This uses a custom algorithm that is specific</span>
+<span class="sd">       to sorting.  Basically it works like this:</span>
+<span class="sd">          step 1: Identify all names that are shared between domains, sequences.</span>
+<span class="sd">          step 2: Take subset of each domains, sequences in this shared list.</span>
+<span class="sd">          step 3: Sort both lists by the name argument (because the lists are the same length, this will</span>
+<span class="sd">                  order them identically)</span>
+<span class="sd">          step 4: Compare with not direct lookup involved (ie no If i in seq and in domains...)</span>
+<span class="sd">          Because sets are used, duplicates are ERASED.  </span>
+<span class="sd">          Warning prints warnings to alert users to cases when domains have accessions not in the sequences list.&#39;&#39;&#39;</span>
+
+    <span class="n">acc_get</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;Accession&#39;</span><span class="p">)</span>
+
+    <span class="n">unique_doms</span><span class="o">=</span><span class="nb">set</span><span class="p">([</span><span class="n">acc_get</span><span class="p">(</span><span class="n">dom</span><span class="p">)</span> <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">])</span>  <span class="c">#Usually duplication in domains record</span>
+    <span class="n">seqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">((</span><span class="n">seq</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">seqrecords</span> <span class="k">if</span> <span class="n">seq</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">unique_doms</span><span class="p">)</span> <span class="c">#Only extract sequences relevant to domains</span>
+
+    <span class="k">if</span> <span class="n">warning</span><span class="p">:</span>  <span class="c">#Replace with warnings later</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_doms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">seqrecords</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">WARNING: assign_dom_sequnce() recieved </span><span class="si">%s</span><span class="s"> domains, from </span><span class="si">%s</span><span class="s"> unique protiens;however,</span><span class="se">\</span>
+<span class="s">            only </span><span class="si">%s</span><span class="s"> of these were found in the passed sequences.&#39;</span><span class="o">%</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_doms</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">seqrecords</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">seqs</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+        <span class="n">sequence</span><span class="o">=</span><span class="n">seqs</span><span class="p">[</span><span class="n">acc_get</span><span class="p">(</span><span class="n">domain</span><span class="p">)]</span><span class="o">.</span><span class="n">seq</span>
+        <span class="k">print</span> <span class="n">sequence</span><span class="p">[</span><span class="n">domain</span><span class="o">.</span><span class="n">Start</span><span class="p">:</span><span class="n">domain</span><span class="o">.</span><span class="n">End</span><span class="p">]</span>
+        <span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+   
+ <span class="c">#  obj=obj._replace( **{field:newval} )</span>
+   
+            
+        </div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>	
+    <span class="n">a</span><span class="o">=</span><span class="n">to_dic</span><span class="p">(</span><span class="n">protein_file</span><span class="p">(</span><span class="s">&#39;whl22.v1.0.orf.fasta&#39;</span><span class="p">),</span> <span class="s">&#39;id&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">a</span><span class="o">.</span><span class="n">items</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+       <li><a href="../../contents.html">documentation </a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Adam Hughes.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

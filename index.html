@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to PyCD’s documentation! &mdash; PyCD 0.1 documentation</title>
+    <title>Welcome to PyCD &mdash; PyCD 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,12 +25,12 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="PyCD 0.1 documentation" href="#" />
-    <link rel="next" title="Getting Started" href="Tutorial/getting_started.html" /> 
+    <link rel="next" title="Dependencies/Installation" href="Tutorial/installation_dependencies.html" /> 
   </head>
   <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
-<a href="#"><img src="_static/gwu.jpg" border="100" alt="sampledoc"/></a>
+<a href="#"><img src="_static/gwu_spu.jpg" border="100" alt="sampledoc"/></a>
 </div>
 
     <div class="related">
@@ -40,7 +40,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Tutorial/getting_started.html" title="Getting Started"
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Tutorial/installation_dependencies.html" title="Dependencies/Installation"
              accesskey="N">next</a> |</li>
         <li><a href="#">home</a>|&nbsp;</li>
         <li><a href="search.html">search</a>|&nbsp;</li>
@@ -53,20 +56,20 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to PyCD&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#">Welcome to PyCD</a><ul>
 <li><a class="reference internal" href="#what-s-new">What&#8217;s New:</a></li>
+<li><a class="reference internal" href="#quick-overview">Quick Overview:</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#contents">Contents:</a><ul>
-<li><a class="reference internal" href="#quick-overview">Quick Overview:</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="Tutorial/getting_started.html"
-                        title="next chapter">Getting Started</a></p>
+  <p class="topless"><a href="Tutorial/installation_dependencies.html"
+                        title="next chapter">Dependencies/Installation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -93,24 +96,40 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-pycd-s-documentation">
-<h1>Welcome to PyCD&#8217;s documentation!<a class="headerlink" href="#welcome-to-pycd-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-pycd">
+<h1>Welcome to PyCD<a class="headerlink" href="#welcome-to-pycd" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="what-s-new">
 <h2>What&#8217;s New:<a class="headerlink" href="#what-s-new" title="Permalink to this headline">¶</a></h2>
-<p>Finally created this site and got it hosted on git.</p>
+<p>Finally created this site and got it hosted on git.  The <a class="reference external" href="https://github.com/hugadams/PyCD">source code</a> is available for download; however, the API is not in a tractable state.  I will address this soon so that others can easily use this package.</p>
+</div>
+<div class="section" id="quick-overview">
+<h2>Quick Overview:<a class="headerlink" href="#quick-overview" title="Permalink to this headline">¶</a></h2>
+<p>PyCD is preliminary Python framework for performing protein domain analysis, particularly NCBI&#8217;s <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml">Conserved Domain Database</a>.  This project stemmed from research at the George Washington University, the goal of which was to characterize lectin-binding domains in the purple sea urchin.  As such, it aims to provide both <em>scripts</em> and an <em>API</em> for conserved domain (CD) analysis.</p>
 </div>
 </div>
 <div class="section" id="contents">
 <h1>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Tutorial/getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API/pycd.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tutorial/installation_dependencies.html">Dependencies/Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/installation_dependencies.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/installation_dependencies.html#installation">Installation</a></li>
 </ul>
-</div>
-<div class="section" id="quick-overview">
-<h2>Quick Overview:<a class="headerlink" href="#quick-overview" title="Permalink to this headline">¶</a></h2>
-<p>PyCD is preliminary Python framework for performing protein domain analysis, particularly NCBI&#8217;s <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml">Conserved Domain Database</a>.  This project stemmed from research at the George Washington University, the goal of which was to characterize lectin-binding domains in the purple sea urchin.  As such, it aims to provide both <em>scripts</em> and an <em>API</em> for conserved domain (CD) analysis.</p>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Tutorial/getting_started.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/getting_started.html#cdd-class">CDD Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/getting_started.html#data-fields">Data Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/getting_started.html#manual-instantion">Manual Instantion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tutorial/getting_started.html#from-file">From File</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API/pycd.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API/DataTypes.html">DataTypes Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API/utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API/test_script.html">test_script Module</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -135,7 +154,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Tutorial/getting_started.html" title="Getting Started"
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Tutorial/installation_dependencies.html" title="Dependencies/Installation"
              >next</a> |</li>
         <li><a href="#">home</a>|&nbsp;</li>
         <li><a href="search.html">search</a>|&nbsp;</li>

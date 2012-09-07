@@ -17,7 +17,7 @@ PyCD attempts to provide utilities or functions that are generally useful.  *cdd
 :mod:`seq_utils` 
 -----------------
 
-.. automodule:: /home/glue/Dropbox/CLECTINS_FOLDER/BioPython/PyCD/CDUtilities/seq_utils
+.. automodule:: CDUtilities.seq_utils
     :members:
     :undoc-members:
     :show-inheritance:

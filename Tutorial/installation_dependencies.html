@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API &mdash; PyCD 0.1 documentation</title>
+    <title>Dependencies/Installation &mdash; PyCD 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="PyCD 0.1 documentation" href="../index.html" />
-    <link rel="next" title="DataTypes Package" href="DataTypes.html" />
-    <link rel="prev" title="Getting Started" href="../Tutorial/getting_started.html" /> 
+    <link rel="next" title="Getting Started" href="getting_started.html" />
+    <link rel="prev" title="Welcome to PyCD’s documentation!" href="../index.html" /> 
   </head>
   <body>
 
@@ -44,10 +44,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="DataTypes.html" title="DataTypes Package"
+          <a href="getting_started.html" title="Getting Started"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../Tutorial/getting_started.html" title="Getting Started"
+          <a href="../index.html" title="Welcome to PyCD’s documentation!"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
         <li><a href="../search.html">search</a>|&nbsp;</li>
@@ -58,15 +58,24 @@
 
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dependencies/Installation</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../Tutorial/getting_started.html"
-                        title="previous chapter">Getting Started</a></p>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to PyCD&#8217;s documentation!</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="DataTypes.html"
-                        title="next chapter">DataTypes Package</a></p>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting Started</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/API/pycd.txt"
+    <li><a href="../_sources/Tutorial/installation_dependencies.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -90,26 +99,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="api">
-<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
-<p>For now, several of these aren&#8217;t working, and it seems that the automodule sphinx method is breaking down, probably due to the dependencies on pyrecords.  This needs fixed, at least
-at the level of automodule.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="DataTypes.html">DataTypes Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="DataTypes.html#module-DataTypes.cdd_fields"><tt class="docutils literal"><span class="pre">cdd_fields</span></tt> Module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#cddutils"><tt class="docutils literal"><span class="pre">cddutils</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-CDUtilities.seq_utils"><tt class="docutils literal"><span class="pre">seq_utils</span></tt></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="test_script.html">test_script Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="test_script.html#id1"><tt class="docutils literal"><span class="pre">Test</span> <span class="pre">Script</span></tt> Module</a></li>
-</ul>
-</li>
-</ul>
+  <div class="section" id="dependencies-installation">
+<h1>Dependencies/Installation<a class="headerlink" href="#dependencies-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>In its current state, PyCD requires following dependencies:</p>
+<p><strong>BioPython</strong>, <strong>pyrecords</strong>, <strong>Python 2.6 or greater</strong></p>
+<p>The requirement of Python 2.6 or greater is actually a dependency of pyrecords, and more particularly, the utilization of namedtuples for record keeping.  This requirement may be lifted
+in later versions if the main domain storage class is replaced.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>For now, only the <a class="reference external" href="https://github.com/hugadams/PyCD">source code</a> is available; however, because it relies on <a class="reference external" href="http://hugadams.github.com/pyrecords">pyrecords</a>, I need to put together a legit pyrecords API before I can make one here.
+As such, one would need to install pyrecords and manually change several paths of local directories in the sourcecode.  I will fix this soon.  Please
+checkout the getting started tutorial in the mean time to get a flavor of how the codebase works.</p>
 </div>
 </div>
 
@@ -129,10 +132,10 @@ at the level of automodule.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="DataTypes.html" title="DataTypes Package"
+          <a href="getting_started.html" title="Getting Started"
              >next</a> |</li>
         <li class="right" >
-          <a href="../Tutorial/getting_started.html" title="Getting Started"
+          <a href="../index.html" title="Welcome to PyCD’s documentation!"
              >previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
         <li><a href="../search.html">search</a>|&nbsp;</li>

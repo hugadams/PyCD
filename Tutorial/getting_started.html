@@ -26,12 +26,12 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="PyCD 0.1 documentation" href="../index.html" />
     <link rel="next" title="API" href="../API/pycd.html" />
-    <link rel="prev" title="Welcome to PyCD’s documentation!" href="../index.html" /> 
+    <link rel="prev" title="Dependencies/Installation" href="installation_dependencies.html" /> 
   </head>
   <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
-<a href="../index.html"><img src="../_static/gwu.jpg" border="100" alt="sampledoc"/></a>
+<a href="../index.html"><img src="../_static/gwu_spu.jpg" border="100" alt="sampledoc"/></a>
 </div>
 
     <div class="related">
@@ -41,10 +41,13 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../API/pycd.html" title="API"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Welcome to PyCD’s documentation!"
+          <a href="installation_dependencies.html" title="Dependencies/Installation"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
         <li><a href="../search.html">search</a>|&nbsp;</li>
@@ -58,15 +61,17 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Getting Started</a><ul>
-<li><a class="reference internal" href="#introduction-to-containers-and-records">Introduction to containers and records:</a></li>
-<li><a class="reference internal" href="#immutable-containers">Immutable containers:</a></li>
+<li><a class="reference internal" href="#cdd-class">CDD Class</a></li>
+<li><a class="reference internal" href="#data-fields">Data Fields</a></li>
+<li><a class="reference internal" href="#manual-instantion">Manual Instantion</a></li>
+<li><a class="reference internal" href="#from-file">From File</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../index.html"
-                        title="previous chapter">Welcome to PyCD&#8217;s documentation!</a></p>
+  <p class="topless"><a href="installation_dependencies.html"
+                        title="previous chapter">Dependencies/Installation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../API/pycd.html"
                         title="next chapter">API</a></p>
@@ -98,18 +103,57 @@
             
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="introduction-to-containers-and-records">
-<h2>Introduction to containers and records:<a class="headerlink" href="#introduction-to-containers-and-records" title="Permalink to this headline">¶</a></h2>
-<p>Good programs always start by managing data in a flexible and robust manner. Python has great builtin container datatypes (lists, tuples, dictionaries), but often, we need to go beyond these and create flexible data handlers which are custom-fitted to our analysis. To this end, the programmer really does become an architect, and a myriad of possible approaches are applicable. This is a double-edged sword, though, as inexperienced coders (like me) will tend to go down the wrong avenues, and implement poor solutions. Emerging from such a trajectory, PyRecords is an attempt to ease the suffering.</p>
+<div class="section" id="cdd-class">
+<h2>CDD Class<a class="headerlink" href="#cdd-class" title="Permalink to this headline">¶</a></h2>
+<p>For now, the main data container is a class called the <strong>DomainCDD</strong> class.  For now, this is merely an immutable record class that is created from my <a class="reference external" href="http://hugadams.github.com/pyrecords">pyrecords project</a>.  Essentially, it is a named tuple with extra functionality.   This means that it is immutable and as the project grows, I may opt to supplant this with a mutable object type.  The choice to choose an immutable record was mainly because these take up very little space in memory and are easy to work with.</p>
 </div>
-<div class="section" id="immutable-containers">
-<h2>Immutable containers:<a class="headerlink" href="#immutable-containers" title="Permalink to this headline">¶</a></h2>
-<p>As far as immutable containers go, Python already has a nice builtin type for managing records- the underused <a class="reference external" href="http://docs.python.org/library/collections.html#collections.namedtuple">namedtuple</a>. A namedtuple is an immutable array container just like a normal tuple, except namedtuples have field designations. Therefore, elements can be accessed by attribute lookup and itemlookup (ie x.a or x[0]); whereas, tuples have no concept of attribute lookup. Namedtuples are a really great option for storing custom datatypes for these reasons:</p>
-<ul class="simple">
-<li>They are lightweight (take up very little memory).</li>
-<li>They are easily interfaced to file or sql database I/O, but also can be declared in-code.</li>
-<li>They have many basic builtin utilities for quick container transformations (nametuple to dict for example).</li>
-</ul>
+<div class="section" id="data-fields">
+<h2>Data Fields<a class="headerlink" href="#data-fields" title="Permalink to this headline">¶</a></h2>
+<p>The CDD class supports output from the CD-Batch search tool.  If a user uploads a set of protein sequences, the domains within the sequence are returned.  Here is some output from a real cdd file:</p>
+<p><strong>Q#3</strong> <strong>-</strong> <strong>&gt;SPU_018904</strong>   <strong>superfamily</strong> <strong>208873</strong>      <strong>361</strong> <strong>413</strong> <strong>2.00744e-22</strong> <strong>97.2737</strong>     <strong>cl08327</strong>     <strong>Glyco_hydro_47</strong> <strong>superfamily</strong>      <strong>C</strong>    <strong>-</strong></p>
+<p>This is actually 14 fields, although it may be difficult to see.  As such, the container class stores them in the following 14 attribute names.</p>
+<p><strong>Query</strong> - Refers back to the protein to which the current domain belong.  Referencing by the numerical order proteins were input to the batch cd-search.  For example Q#10 means the current domain belongs to the tenth protein entered in the batch.</p>
+<p><strong>u1</strong> - N/A</p>
+<p><strong>Accession</strong> - GI Accession number <cite>of the protein</cite> to which this domain belongs.  (Note, &#8216;&gt;&#8217; is stripped internally to be compatible with BioPython Sequence class).</p>
+<p><strong>Hittype</strong> - Describes an NCBI CDD parameter which more or less corresponds to them manner by which the domain was characterized into the database.  Specific hits, for example, are hand-aligned; whereas, the designation of <em>superfamily</em> generally is a bit different.  Refer to the <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml">NCBI CDD</a> for a better explanation.</p>
+<p><strong>PSSMID</strong> - Unique integer identifier for a cd-domain.</p>
+<p><strong>Start</strong> - Position along the peptide sequence at which the domain begins.</p>
+<p><strong>End</strong> - Position along the peptide sequence at which the domain ends.</p>
+<p><strong>Eval</strong> - Evalue score for domain identification.  Again, more information on how this is computed is available through <a class="reference external" href="http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml">NCBI CDD</a>.</p>
+<p><strong>Score</strong> - Heuristic score of domain match.</p>
+<p><strong>DomAccession</strong> - Accession corresponding to the domain (not protein accession).  cl02432 is the domain accession for c-type lectin domain.</p>
+<p><strong>DomShortname</strong> - Unique short name corresponding to the domain accession.  Eg Clect is the shortname to the c-type lectin domain.</p>
+<p><strong>Matchtype</strong> - Not sure how this is different from hit type at the moment.</p>
+<p><strong>u2</strong>  - N/A</p>
+<p><strong>u3</strong>  - N/A</p>
+<p><strong>sequence</strong> - <em>New</em> reserved slot to store the sequence corresponding to the region along the protein to which the domain identifies.  This is not implicitly returned by the NCBI CD Search tool for whatever reason.</p>
+</div>
+<div class="section" id="manual-instantion">
+<h2>Manual Instantion<a class="headerlink" href="#manual-instantion" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s see how it easy it is to instantiate a CD Domain object.  First, I&#8217;m going to demonstrate a manual instantiation; however, in practice, almost all input will be from batch files.  This input style is explained in the <a class="reference external" href="http://hugadams.github.com/pyrecords">pyrecords project</a> more thoroughly.  Records are generated first by inputing the immutable manager class, in this case, it is called <em>domain_manager</em>.</p>
+<div class="highlight-ipython"><pre>In [2]: from DataTypes.cdd_fields import domain_manager</pre>
+</div>
+<p>Taking my example string:</p>
+<p><strong>Q#3</strong> <strong>-</strong> <strong>&gt;SPU_018904</strong>   <strong>superfamily</strong> <strong>208873</strong>      <strong>361</strong> <strong>413</strong> <strong>2.00744e-22</strong> <strong>97.2737</strong>     <strong>cl08327</strong>     <strong>Glyco_hydro_47</strong> <strong>superfamily</strong>      <strong>C</strong>    <strong>-</strong></p>
+<p>I will pass this as a list into my domain_manager.  This is very similar to namedtuple syntax, but pyrecords is automatically converting all of the attributes to their proper types.  For example, the attribute <em>Start</em> will be converted into an integer directly.</p>
+<div class="highlight-ipython"><pre>In [9]: fake_domain=fake_domain.strip().split()
+
+In [10]: domain=domain_manager._make(fake_domain, extend_defaults=True)
+In [11]: domain
+
+Out[11]: DomainCDD(Query='Q#3', u1='-', Accession='&gt;SPU_018904', Hittype='superfamily', PSSMID=208873, Start=361, End=413, Eval=2.00744e-22, Score=97.2737, DomAccession='cl08327', DomShortname='Glyco_hydro_47', Matchtype='superfamily', u2='C', u3='-', sequence='')</pre>
+</div>
+<p>Now I have complete attribute access with the correct field types.</p>
+<div class="highlight-ipython"><pre>In [13]: domain.Accession, domain.Score
+Out[13]: ('&gt;SPU_018904', 97.2737)
+
+In [15]: type(domain.Accession), type(domain.Score)
+Out[15]: (str, float)</pre>
+</div>
+</div>
+<div class="section" id="from-file">
+<h2>From File<a class="headerlink" href="#from-file" title="Permalink to this headline">¶</a></h2>
+<p>For now, only the batch output of NCBI&#8217;s CD Search is supported.  The file reader function is merely a small wrapper around the pyrecords from_file() function.</p>
 </div>
 </div>
 
@@ -126,10 +170,13 @@
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../API/pycd.html" title="API"
              >next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Welcome to PyCD’s documentation!"
+          <a href="installation_dependencies.html" title="Dependencies/Installation"
              >previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
         <li><a href="../search.html">search</a>|&nbsp;</li>
