@@ -12,11 +12,11 @@ from Utilities.utils import to_dic  #From pyrecords
 ### Makes a dictionary keyed by protein id from SeqIO.parse.  Parse returns a tuple with count and seq object
 ### for example (0, Seq0), (1, Seq1).  We then are taking the second field (Seq) and keying a dictionary by id attribute.
 
-def protein_file(infile, filetype='fasta'):
+def proteins_from_file(infile, filetype='fasta'):
     ''' Reads in a protein file and returns all seq records as iterable. Easy to key later using
     my records utilities.'''
     return tuple([record[1] for record \
-         in enumerate(SeqIO.parse(open(infile), filetype, generic_protein))])  #Method autostrips the '>'
+         in enumerate(SeqIO.parse(open(infile), filetype, generic_protein))])  #Careful! this autostrips the '>'
 
 
 def assign_dom_seq(domains, seqrecords, warning=True):
@@ -42,15 +42,29 @@ def assign_dom_seq(domains, seqrecords, warning=True):
             print '\nWARNING: assign_dom_sequnce() recieved %s domains, from %s unique protiens;however,\
             only %s of these were found in the passed sequences.'%(len(unique_doms), len(seqrecords), len(seqs))
 
-    for domain in domains:
-        sequence=seqs[acc_get(domain)].seq
-        print sequence[domain.Start:domain.End]
-        print len(sequence)
-   
+
+    ### Iterate through domains, assign sequences.  Because of immutability, need to overwrite objects.  
+    ### For mutable objects, can just do that in place, but then do I even want to return anything? 
+    ### This is why I need mutable counterparts and really need to think about that hsit.
+        
+    new_domains=[domain._replace(**{'Sequence':seqs[acc_get(domain)].seq[domain.Start:domain.End]})\
+                 for domain in domains]
+    
+    ### Below is the commented out steps of the above listcomprehension.  Left them because that expression
+    ### is so damn messy.
+    
+    #new_domains=[]
+    #for domain in domains:
+        #sequence=seqs[acc_get(domain)].seq
+        #domain_sequence=sequence[domain.Start:domain.End]
+        #new_domains.append( domain._replace(**{'Sequence':domain_sequence}) )
+    
+        
+    return new_domains
+
+
  #  obj=obj._replace( **{field:newval} )
-   
-            
+               
         
 if __name__ == '__main__':	
-    a=to_dic(protein_file('whl22.v1.0.orf.fasta'), 'id')
-    print a.items()[0]
+    print 'Nothin to run in seq_utils.py main file'
