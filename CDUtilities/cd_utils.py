@@ -33,6 +33,13 @@ def crop_accession(domains):
     domains=[alter_field(domain, 'Accession', lambda x: x.strip('>') ) for domain in domains]
     return tuple(domains)
 
+def domain_translator(domains):
+    ''' Takes in set of domain objects, returns unique key value pairs of domain accessions to their shortnames. 
+    Uses a dictionary because it imposes unique entries automatically.'''
+    return dict( (obj.DomAccession, obj.DomShortname) for obj in domains )
+
+
+
 def formatted_domains(domains, style='Domain Accession'):
     ''' Keys QueryAccessions to their domains ie: 'xp2343242.2 : cl002343, cl002343, cl202032.  This requires sorting to
         retain the domains in their positional order.  If a dictionary is passed, sorting is done automatically.  If 

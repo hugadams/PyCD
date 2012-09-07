@@ -1,0 +1,14 @@
+#Left Flank	Count	Right Flank	Count	Left/Right Disparity
+Ig_X 	 17 	 X_Ig 	 8 	 9 
+Avidin_X 	 0 	 X_Avidin 	 20 	 20 
+CUB_X 	 21 	 X_CUB 	 0 	 21 
+SEA_X 	 2 	 X_SEA 	 1 	 1 
+GPS_X 	 1 	 X_GPS 	 0 	 1 
+
+#### Adjacency Matrix ####
+	GPS
+Ig 	 25 
+Avidin 	 20 
+CUB 	 21 
+SEA 	 3 
+GPS 	 1 
