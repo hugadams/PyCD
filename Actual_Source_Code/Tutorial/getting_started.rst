@@ -1,12 +1,13 @@
 Getting Started
 ===============
 
+The following sections will provide a brief introduction to the PyCD framework, with a more thorough tutorial coming soon.
 
 
-CDD Class
----------
+Data Storage: The (Conserved Domains Database) CDD Class
+--------------------------------------------------------
 
-For now, the main data container is a class called the **DomainCDD** class.  For now, this is merely an immutable record class that is created from my `pyrecords project`_.  Essentially, it is a named tuple with extra functionality.   This means that it is immutable and as the project grows, I may opt to supplant this with a mutable object type.  The choice to choose an immutable record was mainly because these take up very little space in memory and are easy to work with.  
+For now, the main data container is a class called the **DomainCDD** class.  This is an immutable record class that is created from my `pyrecords project`_.  Essentially, it is a named tuple with extra functionality.   Although this is currently immutble, I may supplant this with a mutable object type in the future.  The choice to choose an immutable record was mainly because these take up very little space in memory and are easy to work with.  
 　
 .. _pyrecords project: http://hugadams.github.com/pyrecords
 
@@ -17,7 +18,7 @@ The CDD class supports output from the CD-Batch search tool.  If a user uploads 
 
 **Q#3** **-** **>SPU_018904**	**superfamily**	**208873**	**361**	**413**	**2.00744e-22**	**97.2737**	**cl08327**	**Glyco_hydro_47** **superfamily**	**C**	 **-**
 
-This is actually 14 fields, although it may be difficult to see.  As such, the container class stores them in the following 14 attribute names.  
+This record contains 14 delimited fields.  The CDD class stores them in the following 14 attributes.  
 
 
 **Query** - Refers back to the protein to which the current domain belong.  Referencing by the numerical order proteins were input to the batch cd-search.  For example Q#10 means the current domain belongs to the tenth protein entered in the batch.
@@ -26,11 +27,11 @@ This is actually 14 fields, although it may be difficult to see.  As such, the c
 
 **Accession** - GI Accession number `of the protein` to which this domain belongs.  (Note, '>' is stripped internally to be compatible with BioPython Sequence class). 
 
-**Hittype** - Describes an NCBI CDD parameter which more or less corresponds to them manner by which the domain was characterized into the database.  Specific hits, for example, are hand-aligned; whereas, the designation of *superfamily* generally is a bit different.  Refer to the `NCBI CDD`_ for a better explanation.
+**Hittype** - Describes an NCBI CDD parameter which more or less corresponds to the extent of curation in the database.  Specific hits, for example, are hand-aligned; whereas, the designation of *superfamily* generally is applied to computationally recognized sequences.  Refer to the `NCBI CDD`_ for a better explanation.
 
 .. _NCBI CDD: http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml
 
-**PSSMID** - Unique integer identifier for a cd-domain.
+**PSSMID** - Unique integer identifier for a CD domain.
 
 **Start** - Position along the peptide sequence at which the domain begins.
 
@@ -42,7 +43,7 @@ This is actually 14 fields, although it may be difficult to see.  As such, the c
 
 **DomAccession** - Accession corresponding to the domain (not protein accession).  cl02432 is the domain accession for c-type lectin domain. 
 
-**DomShortname** - Unique short name corresponding to the domain accession.  Eg Clect is the shortname to the c-type lectin domain.
+**DomShortname** - Unique short name corresponding to the domain accession.  E.g. CLECT is the shortname to the c-type lectin domain.
 
 **Matchtype** - Not sure how this is different from hit type at the moment.
 
@@ -52,8 +53,11 @@ This is actually 14 fields, although it may be difficult to see.  As such, the c
 
 **sequence** - *New* reserved slot to store the sequence corresponding to the region along the protein to which the domain identifies.  This is not implicitly returned by the NCBI CD Search tool for whatever reason.
 
-Manual Instantion
------------------
+Reading in Domains
+------------------
+
+Manual Instantiation
+^^^^^^^^^^^^^^^^^^^^
 
 Let's see how it easy it is to instantiate a CD Domain object.  First, I'm going to demonstrate a manual instantiation; however, in practice, almost all input will be from batch files.  This input style is explained in the `pyrecords project`_ more thoroughly.  Records are generated first by inputing the immutable manager class, in this case, it is called *domain_manager*.
 
@@ -65,7 +69,7 @@ Taking my example string:
 
 **Q#3** **-** **>SPU_018904**	**superfamily**	**208873**	**361**	**413**	**2.00744e-22**	**97.2737**	**cl08327**	**Glyco_hydro_47** **superfamily**	**C**	 **-**
 
-I will pass this as a list into my domain_manager.  This is very similar to namedtuple syntax, but pyrecords is automatically converting all of the attributes to their proper types.  For example, the attribute *Start* will be converted into an integer directly.
+I will pass this as a list into the domain_manager.  This is very similar to namedtuple syntax, but pyrecords is automatically converts all of the attributes to their proper types.  For example, the attribute *Start* will be converted into an integer by default.
 
 .. sourcecode:: ipython
 
@@ -86,11 +90,130 @@ Now I have complete attribute access with the correct field types.
    In [15]: type(domain.Accession), type(domain.Score) 
    Out[15]: (str, float)
 
+Anyone who is familiar with Python's *namedtuple* data containers should find this syntax familiar.
 
-From File
----------
+File Input
+^^^^^^^^^^
 
-For now, only the batch output of NCBI's CD Search is supported.  The file reader function is merely a small wrapper around the pyrecords from_file() function.
+For now, he batch output of NCBI's CD Search is the only filetype supported.  It should be straigtforward to create custom file input shcemes, as the file reader function, *from_cdd_file()* is merely a small wrapper around the pyrecords *from_file()* function.  To demonstrate, I will load in a Test set of 500 real purple sea urchin proteins.
+
+.. sourcecode:: ipython
+
+   In [11]: domains=from_cdd_file(domain_manager, 'TestData/TestSet.txt')
+   In [13]: domains[0]
+
+   Out[13]: DomainCDD(Query='Q#1', u1='-', Accession='>WHL22.684570.0', Hittype='superfamily', PSSMID=212227, Start=189, End=410, Eval=2.91122e-33, Score=124.196, DomAccession='cl00489', DomShortname='60KD_IMP', Matchtype='superfamily', u2='-', u3='-', sequence='')
+
+Domain Analysis
+---------------
+
+The following sections will demonstrate some of the ways to manipulate and analyze batches of CD domains in PyCD.
+
+Manipulating Data
+^^^^^^^^^^^^^^^^^
+
+PyRecords's *to_dic()* function allows for very flexible dictionary recasting right out of the box.  *to_dic()* requires the user specify an attribute field to key the dictionary.  If we wanted to key the dictionary by, for example, the unique integer PSSMID, this is very simple:
+
+
+.. sourcecode:: ipython
+
+   In [16]: domdic=to_dic(domains, 'PSSMID')
+   In [18]: domdic.items()[0]
+
+   Out[18]: (199168, DomainCDD(Query='Q#174', u1='-', Accession='>WHL22.399623.0' ...))
+
+In reality, the PSSMID **is not** a good key because the same domains appear multiple times in the data set.  Therefore, this key **is not unique**.  *to_dic()* makes it quite easy to create custom dictionary keys as a composition of field attribtues.  For example, the datafields *Accession*, *Start*, *End*, *PSSMID* together make a key that is both unique and informative.  This is easy to implement.
+
+.. sourcecode:: ipython
+
+   In [22]: domdic=to_dic(domains, 'Accession', 'Start', 'End', 'PSSMID')
+   In [23]: domdic.items()[0]
+
+   Out[23]: ('>WHL22.485427.0_497_567_209363', DomainCDD(Query='Q#391', u1='-', Accession='>WHL22.485427.0' ...))
+
+It doesn't matter that the *Start* and *End* fields were stored as integers; *to_dic()* recasts them to strings.  The default delimiter used to separate attribute fields is the underscore, '_', and be changed via a keyword parameter in the function call.
+
+A second way to store batch data is in the **formatted domains** style, which assigns domains to their respective proteins in a manner which preserves order.  The domains will be recorded by their domain accessions by defaults (e.g. "cl02432"); however, they may be stored via shortname (e.g. "CLECT") through a keyword in the *formatted_domains()* function call:
+
+.. sourcecode:: ipython
+
+   In [27]: acs=formatted_domains(domains)
+   In [28]: shorts=formatted_domains(domains, style='Domain Shortname')
+
+   In [32]: acs.items()[1]
+   Out[32]: ('>WHL22.437786.0', ['cl02608', 'cl00158', 'cl03218', 'cl15779'])
+
+   In [35]: shorts.items()[1] 
+   Out[35]: ('>WHL22.437786.0', ['BAH', 'ZnF_GATA', 'ELM2', 'SANT'])
+
+
+This formatted_domains representation is more natural for visualizing how the domains are structured along the proteins.  In summary, there are three distinct ways to store batch domain data in PyCD:
+
+1. Nested tuples is the default storage style of PyCD and is returned by the *from_cdd_file()* function.
+2. Dictionaries with unique composite attribute keys is another useful way to handle the data.
+3. The so-called *formatted domains* style retains information about domain ordering along a protein.  
+
+Often times, one representation of the dataset is more natural for a given type of analysis as will be demonstrated below.  As PyCD matures, a dataclass may be assigned to the formatted domains storage style to include additional domain information such as position along a protein and other information.
+
+Analysis
+^^^^^^^^
+
+PyRecords offers a general *histogram()* function to count attribute value occurrences in the set; for now this is built to handle dictionary input, but soon will handle nested tuples as well.  A call to this function specifying either of the domain attribute fields results in the domain distribution for the dataset:
+
+.. sourcecode:: ipython
+
+   In [43]: hist=histogram(domdic, 'DomAccession', sorted_return=True)
+
+   In [44]: hist['DomAccession'][0:3]
+   Out[44]: (('cl09941', 82), ('cl11960', 43), ('cl09099', 27))
+
+If the slice notation of the histogram looks confusing, it is because the *histogram()* function is actually designed to accept multiple input fields.  Hence, multiple histograms can be generated simultaneously across attribute fields.  For example, below I will count occurrences for the Domain Acession field and PSSMID field simultaneously, and then output the top three PSSMID results.
+
+.. sourcecode:: ipython
+
+   In [48]: hist=histogram(domdic, 'DomAccession', 'PSSMID', sorted_return=True)
+   In [49]: hist['PSSMID'][0:3]
+
+   Out[49]: ((209104, 82), (209398, 43), (212291, 27))
+
+Viewing domain data as a *network* is another important facet of domain analysis.  In the future, I would like to interface PyCD to Python's NetworkX_ package.  For now, I use a custom algorithm to create a network from the domain data.  This is done through the *network_diagram()* function and requires the formatted domains style of input.  It is important to emphasize that *network_diagram()* *does not* make a full network for entire dataset; rather, it creates a network for a single domain in the set.   A root domain (node) must be passed in the function call:
+
+.. _NetworkX: http://networkx.lanl.gov/
+
+
+.. sourcecode:: ipython
+
+   In [51]: shorts=formatted_domains(domains, style='Domain Shortname')
+   In [57]: domain_net=network_diagram(shorts, 'TPR')
+
+   In [58]: domain_net
+   Out[58]: Network(seed_domain='TPR', flank_left=('CHAT',), flank_right=(), singles=3, doubles=13, n_terminal=3, c_terminal=3)
+
+The information above indicates which domains are found adjacent to TPR in mosaic (multi-domain) proteins.  Only the CHAT domain appears with TPR; otherwise, TPR is found either along, or in pairs (13 times this happens).  This function will likely be supplanted by more sophisticated utilities after interfacing to NetworkX.  For now, it is useful to our analysis.
+
+PyCD provides a *network_outfile()* function that outputs the network data as a summary as well as an *adjacency matrix*.  The adjacency matrix output is a standard format for network visualization tools like the stellar yEd_ software.
+
+.. _yEd: http://www.yworks.com/en/products_yed_about.html
+
+The output of *network_outfile()*, when read in directly to yEd_ (after tweaking a bit of yEd's options), yields the following plot using CLECT as a root node in an entire computationally-annotated proteome:
+
+.. image:: Tutorial_images/clect_adj.bmp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -8,7 +8,7 @@ PyCD attempts to provide utilities or functions that are generally useful.  *cdd
 :mod:`cddutils` 
 -----------------
 
-.. automodule:: CDUtilities.cddutils
+.. automodule:: CDUtilities.cd_utils
     :members:
     :undoc-members:
     :show-inheritance:

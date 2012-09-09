@@ -63,7 +63,7 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Utilities</a><ul>
-<li><a class="reference internal" href="#cddutils"><tt class="docutils literal"><span class="pre">cddutils</span></tt></a></li>
+<li><a class="reference internal" href="#module-CDUtilities.cd_utils"><tt class="docutils literal"><span class="pre">cddutils</span></tt></a></li>
 <li><a class="reference internal" href="#module-CDUtilities.seq_utils"><tt class="docutils literal"><span class="pre">seq_utils</span></tt></a></li>
 </ul>
 </li>
@@ -104,8 +104,83 @@
   <div class="section" id="utilities">
 <h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
 <p>PyCD attempts to provide utilities or functions that are generally useful.  <em>cddutils</em> provides utilities aimed to manipulating CD records.  For example, one can generate histograms and network diagrams from a batch of CD records.  <em>seq_utils</em> provides utilities for combining CD domain data with protein sequence data.  One important utility extracts the peptide sequence to a given domain from a .fasta file and assigns it to the domain record.  <a class="reference external" href="http://biopython.org/wiki/Seq">BioPython&#8217;s Seq</a> class is used to handle sequence information throughout.</p>
-<div class="section" id="cddutils">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">cddutils</span></tt><a class="headerlink" href="#cddutils" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-CDUtilities.cd_utils">
+<span id="cddutils"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">cddutils</span></tt><a class="headerlink" href="#module-CDUtilities.cd_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="CDUtilities.cd_utils.crop_accession">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">crop_accession</tt><big>(</big><em>domains</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#crop_accession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.crop_accession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Since NCBI CD Domain files natively use &#8216;&gt;&#8217; in the accession, but BioPython strips them, this 
+will crop out any &#8216;&gt;&#8217; found in the accession attribute of a domain</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.domain_translator">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">domain_translator</tt><big>(</big><em>domains</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#domain_translator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.domain_translator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in set of domain objects, returns unique key value pairs of domain accessions to their shortnames. 
+Uses a dictionary because it imposes unique entries automatically.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.formatted_domains">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">formatted_domains</tt><big>(</big><em>domains</em>, <em>style='Domain Accession'</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#formatted_domains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.formatted_domains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keys QueryAccessions to their domains ie: &#8216;xp2343242.2 : cl002343, cl002343, cl202032.  This requires sorting to
+retain the domains in their positional order.  If a dictionary is passed, sorting is done automatically.  If</p>
+<blockquote>
+<div><p>an interable is passed, program assumes it is correctly sorted from the sortbyarg utility.</p>
+<dl class="docutils">
+<dt>style:  kw that determines if domains will be in their CD accession (eg cl02342) or shortname (Clectin)</dt>
+<dd>exact style kws are &#8216;Domain Accession&#8217; or &#8216;Domain Shortname.</dd>
+</dl>
+</div></blockquote>
+<p>WAR</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.from_cdd_file">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">from_cdd_file</tt><big>(</big><em>manager</em>, <em>infile</em>, <em>skip_assignment=False</em>, <em>warning=False</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#from_cdd_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.from_cdd_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>For now this is ripping off utils.py from pyrecords.  If that file ever matures enough so that flexible
+read conditions are imposed, then this file should become obsolete.  The CDD files are 14 lines long, so
+this will leave the 15th slot in the record empty for the domain sequence to later be populated.  Assumes
+first 8 lines are header and none in footer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.histogram">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">histogram</tt><big>(</big><em>cd_dic</em>, <em>*fields</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns count of unique occurrences for a field in CDDomain record.  Literally it is counting the
+occurrences of a unique attribute.  In practice, this is useful for understanding the domain distribution
+in the dataset.  Build to take in multple fields for flexibility.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.network_diagram">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">network_diagram</tt><big>(</big><em>formatted_domains_dic</em>, <em>domain</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#network_diagram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.network_diagram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a network diagram from formatted_domains_dic with central node as &#8220;domain&#8221;. These accept dictionaries of the return of the
+singles_mosaics() method.  If they are not passed, the program will run this method on the formatted_dom_dic.&#8217;
+Domain name style determined by formatted_domains_dic</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.network_outfile">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">network_outfile</tt><big>(</big><em>network</em>, <em>outstring</em>, <em>delimiter='\t'</em>, <em>summary=True</em>, <em>adjacency=True</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#network_outfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.network_outfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in network object from network_diagram method and outputs it as a summary and/or adjacency.
+For now these are written into the same file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.overlap">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">overlap</tt><big>(</big><em>domains</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Incomplete</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CDUtilities.cd_utils.singles_mosaics">
+<tt class="descclassname">CDUtilities.cd_utils.</tt><tt class="descname">singles_mosaics</tt><big>(</big><em>formatted_domains_dic</em><big>)</big><a class="reference internal" href="../_modules/CDUtilities/cd_utils.html#singles_mosaics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CDUtilities.cd_utils.singles_mosaics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all formatted domains that are merely single domains or multidomains (mosaics).
+Could be interfaced directly to cd_dic, but figured it would be better to pass formatted
+domains directly.  Domain name style determined by formatted_domains_dic</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-CDUtilities.seq_utils">
 <span id="seq-utils"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">seq_utils</span></tt><a class="headerlink" href="#module-CDUtilities.seq_utils" title="Permalink to this headline">¶</a></h2>

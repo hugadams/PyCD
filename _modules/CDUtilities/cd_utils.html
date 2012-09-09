@@ -1,0 +1,274 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CDUtilities.cd_utils &mdash; PyCD 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="PyCD 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../index.html"><img src="../../_static/gwu_spu.jpg" border="100" alt="sampledoc"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+       <li><a href="../../contents.html">documentation </a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for CDUtilities.cd_utils</h1><div class="highlight"><pre>
+<span class="c">### Methods in particluar to making custom domain analysis.  Not general, core methods. ###</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;/home/glue/Dropbox/pyrecords&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">Utilities.utils</span> <span class="kn">import</span> <span class="n">sortbyarg</span><span class="p">,</span> <span class="n">from_file</span><span class="p">,</span> <span class="n">alter_field</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<div class="viewcode-block" id="from_cdd_file"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.from_cdd_file">[docs]</a><span class="k">def</span> <span class="nf">from_cdd_file</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">infile</span><span class="p">,</span> <span class="n">skip_assignment</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">warning</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; For now this is ripping off utils.py from pyrecords.  If that file ever matures enough so that flexible</span>
+<span class="sd">        read conditions are imposed, then this file should become obsolete.  The CDD files are 14 lines long, so</span>
+<span class="sd">        this will leave the 15th slot in the record empty for the domain sequence to later be populated.  Assumes</span>
+<span class="sd">        first 8 lines are header and none in footer.&#39;&#39;&#39;</span>
+         
+    <span class="n">lines</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">len_header</span><span class="o">=</span><span class="mi">8</span> <span class="p">;</span> <span class="n">len_footer</span><span class="o">=</span><span class="mi">0</span>
+      
+    <span class="c">### Crop any header or footer lines ###   </span>
+    <span class="n">lines</span><span class="o">=</span><span class="n">lines</span><span class="p">[</span><span class="n">len_header</span><span class="p">:(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="n">len_footer</span><span class="p">)]</span>
+          
+    <span class="c">### THIS IS BAD.  NEED TO FORCE THIS TO BE A PASSABLE CONDITION ON EACH ROW, FOR EXAMPLE LIKE WHAT DF.APPLY</span>
+    <span class="c">### DOES IN PANDAS.</span>
+    <span class="n">lines</span><span class="o">=</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>               
+                            
+    <span class="k">if</span> <span class="n">skip_assignment</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">manager</span><span class="o">.</span><span class="n">_make_return</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">extend_defaults</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">manager</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">warning</span><span class="o">=</span><span class="n">warning</span><span class="p">,</span> <span class="n">extend_defaults</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="crop_accession"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.crop_accession">[docs]</a><span class="k">def</span> <span class="nf">crop_accession</span><span class="p">(</span><span class="n">domains</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Since NCBI CD Domain files natively use &#39;&gt;&#39; in the accession, but BioPython strips them, this </span>
+<span class="sd">        will crop out any &#39;&gt;&#39; found in the accession attribute of a domain &#39;&#39;&#39;</span>
+    <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="n">alter_field</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s">&#39;Accession&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;&gt;&#39;</span><span class="p">)</span> <span class="p">)</span> <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="domain_translator"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.domain_translator">[docs]</a><span class="k">def</span> <span class="nf">domain_translator</span><span class="p">(</span><span class="n">domains</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Takes in set of domain objects, returns unique key value pairs of domain accessions to their shortnames. </span>
+<span class="sd">    Uses a dictionary because it imposes unique entries automatically.&#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">DomAccession</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">DomShortname</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">domains</span> <span class="p">)</span>
+
+
+</div>
+<div class="viewcode-block" id="formatted_domains"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.formatted_domains">[docs]</a><span class="k">def</span> <span class="nf">formatted_domains</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;Domain Accession&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Keys QueryAccessions to their domains ie: &#39;xp2343242.2 : cl002343, cl002343, cl202032.  This requires sorting to</span>
+<span class="sd">        retain the domains in their positional order.  If a dictionary is passed, sorting is done automatically.  If </span>
+<span class="sd">        an interable is passed, program assumes it is correctly sorted from the sortbyarg utility.</span>
+
+<span class="sd">        style:  kw that determines if domains will be in their CD accession (eg cl02342) or shortname (Clectin)</span>
+<span class="sd">                exact style kws are &#39;Domain Accession&#39; or &#39;Domain Shortname.</span>
+<span class="sd">    WAR&#39;&#39;&#39;</span>
+        <span class="c">#If domains is dictionary, presort.  Otherwise, assume user as already passed a the return of sortbyarg</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">domains</span><span class="o">=</span><span class="n">sortbyarg</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="s">&#39;Accession&#39;</span><span class="p">,</span> <span class="s">&#39;Start&#39;</span><span class="p">)</span>  <span class="c">#Sorting is still suceptible to string sorting issues</span>
+
+    <span class="k">if</span> <span class="n">style</span><span class="o">==</span><span class="s">&#39;Domain Accession&#39;</span><span class="p">:</span>
+        <span class="n">fget</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;DomAccession&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style</span><span class="o">==</span><span class="s">&#39;Domain Shortname&#39;</span><span class="p">:</span>
+        <span class="n">fget</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;DomShortname&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;style parameter must be Domain Accession or Domain Shortname&#39;</span><span class="p">)</span>
+
+    <span class="n">fdic</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">domains</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dom</span><span class="o">.</span><span class="n">Accession</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fdic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">fdic</span><span class="p">[</span><span class="n">dom</span><span class="o">.</span><span class="n">Accession</span><span class="p">]</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">fdic</span><span class="p">[</span><span class="n">dom</span><span class="o">.</span><span class="n">Accession</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fget</span><span class="p">(</span><span class="n">dom</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fdic</span>
+</div>
+<div class="viewcode-block" id="histogram"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.histogram">[docs]</a><span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="n">cd_dic</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Returns count of unique occurrences for a field in CDDomain record.  Literally it is counting the</span>
+<span class="sd">    occurrences of a unique attribute.  In practice, this is useful for understanding the domain distribution</span>
+<span class="sd">    in the dataset.  Build to take in multple fields for flexibility.&#39;&#39;&#39;</span>
+    <span class="n">out</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">valuelist</span> <span class="ow">in</span> <span class="n">get_fields</span><span class="p">(</span><span class="n">cd_dic</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">unique</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">valuelist</span><span class="p">))</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="nb">tuple</span><span class="p">([(</span><span class="n">v</span><span class="p">,</span> <span class="n">valuelist</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">out</span>   </div>
+<div class="viewcode-block" id="overlap"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.overlap">[docs]</a><span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="n">domains</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Incomplete&#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">domains</span><span class="o">=</span><span class="n">sortbyarg</span><span class="p">(</span><span class="n">domains</span><span class="p">,</span> <span class="s">&#39;Accession&#39;</span><span class="p">,</span> <span class="s">&#39;Start&#39;</span><span class="p">)</span>  <span class="c">#Sorting is still suceptible to string sorting issues</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="singles_mosaics"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.singles_mosaics">[docs]</a><span class="k">def</span> <span class="nf">singles_mosaics</span><span class="p">(</span><span class="n">formatted_domains_dic</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Returns all formatted domains that are merely single domains or multidomains (mosaics).</span>
+<span class="sd">        Could be interfaced directly to cd_dic, but figured it would be better to pass formatted</span>
+<span class="sd">        domains directly.  Domain name style determined by formatted_domains_dic&#39;&#39;&#39;</span>
+    <span class="n">singles</span><span class="o">=</span><span class="p">{}</span> <span class="p">;</span> <span class="n">mosaics</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">formatted_domains_dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">mosaics</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">singles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">singles</span><span class="p">,</span> <span class="n">mosaics</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="network_diagram"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.network_diagram">[docs]</a><span class="k">def</span> <span class="nf">network_diagram</span><span class="p">(</span><span class="n">formatted_domains_dic</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Creates a network diagram from formatted_domains_dic with central node as &quot;domain&quot;. These accept dictionaries of the return of the</span>
+<span class="sd">    singles_mosaics() method.  If they are not passed, the program will run this method on the formatted_dom_dic.&#39;</span>
+<span class="sd">    Domain name style determined by formatted_domains_dic&#39;&#39;&#39;</span>
+    <span class="n">left_domains</span><span class="o">=</span><span class="p">[]</span> <span class="p">;</span> <span class="n">right_domains</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">doubles</span><span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">Ncount</span><span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">Ccount</span><span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">sings</span><span class="o">=</span><span class="mi">0</span>
+
+    <span class="c">### See if user wants to switch the style to accession</span>
+
+    <span class="c">### Get singles/mosaics either from file or from formatted_domains_dic and sintles_mosaics() method ###</span>
+    <span class="n">singles</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;singles&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">mosaics</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;mosaics&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">singles</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">dict</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">singles</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">dict</span><span class="p">:</span> <span class="c">#If singles and mosaics both not passed</span>
+        <span class="n">singles</span><span class="p">,</span> <span class="n">mosaics</span> <span class="o">=</span> <span class="n">singles_mosaics</span><span class="p">(</span><span class="n">formatted_domains_dic</span><span class="p">)</span>
+
+    <span class="n">sings</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">domain</span><span class="p">,</span> <span class="n">singles</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="p">)</span> <span class="p">)</span>  <span class="c">#If value is == domain</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mosaics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">domain</span><span class="p">:</span>
+            <span class="n">Ncount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">domain</span><span class="p">:</span>
+                <span class="n">right_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">doubles</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">domain</span><span class="p">:</span>
+            <span class="n">Ccount</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">domain</span><span class="p">:</span>
+                <span class="n">left_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>   <span class="c">#Does not update doubles as this would double count!</span>
+
+        <span class="k">for</span> <span class="n">dom</span> <span class="ow">in</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c">#Iterate over middle</span>
+            <span class="n">dom_ind</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dom</span><span class="p">)</span>
+            <span class="n">domleft</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="n">dom_ind</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">]</span>
+            <span class="n">domright</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="n">dom_ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">dom</span> <span class="o">==</span> <span class="n">domain</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">domleft</span> <span class="o">!=</span> <span class="n">domain</span> <span class="ow">and</span> <span class="n">domright</span> <span class="o">!=</span> <span class="n">domain</span><span class="p">:</span>   <span class="c">#A-X-A  for X being domain of interest</span>
+                    <span class="n">left_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domleft</span><span class="p">)</span>
+                    <span class="n">right_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domright</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">domleft</span> <span class="o">!=</span> <span class="n">domain</span> <span class="ow">and</span> <span class="n">domright</span> <span class="o">==</span> <span class="n">domain</span><span class="p">:</span>  <span class="c">#A-X-X</span>
+                    <span class="n">left_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domleft</span><span class="p">)</span>   
+                    <span class="n">doubles</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">elif</span> <span class="n">domleft</span> <span class="o">==</span> <span class="n">domain</span> <span class="ow">and</span> <span class="n">domright</span> <span class="o">!=</span> <span class="n">domain</span><span class="p">:</span>  <span class="c">#X-X-A</span>
+                    <span class="n">right_domains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domright</span><span class="p">)</span>  <span class="c">#Doubles not up-counted to avoid double counts</span>
+
+                <span class="k">elif</span> <span class="n">domleft</span> <span class="o">==</span> <span class="n">domain</span> <span class="ow">and</span> <span class="n">domright</span> <span class="o">==</span> <span class="n">domain</span><span class="p">:</span>  <span class="c">#X-X-X</span>
+                    <span class="n">doubles</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c">#Counting should work right if you left the top 3 if statements act on a long string A-L-L-L-L-B, it should be consistent			</span>
+    <span class="n">Network</span><span class="o">=</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Network&#39;</span><span class="p">,</span> <span class="s">&#39;seed_domain, flank_left, flank_right, singles, doubles, n_terminal, c_terminal&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Network</span><span class="o">.</span><span class="n">_make</span><span class="p">([</span><span class="n">domain</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">left_domains</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">right_domains</span><span class="p">),</span> <span class="n">sings</span><span class="p">,</span> <span class="n">doubles</span><span class="p">,</span> <span class="n">Ncount</span><span class="p">,</span> <span class="n">Ccount</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="network_outfile"><a class="viewcode-back" href="../../API/utils.html#CDUtilities.cd_utils.network_outfile">[docs]</a><span class="k">def</span> <span class="nf">network_outfile</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">outstring</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">adjacency</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Takes in network object from network_diagram method and outputs it as a summary and/or adjacency.</span>
+<span class="sd">    For now these are written into the same file.&#39;&#39;&#39;</span>
+    <span class="n">f</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">outstring</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">allflanks</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">flank_left</span> <span class="o">+</span> <span class="n">network</span><span class="o">.</span><span class="n">flank_right</span><span class="p">))</span>  <span class="c">#All unique right/left flanks</span>
+    <span class="k">if</span> <span class="n">summary</span> <span class="o">==</span><span class="bp">True</span><span class="p">:</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">seed_domain</span>
+        <span class="n">sum_header</span><span class="o">=</span><span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">([(</span><span class="s">&#39;#Left Flank&#39;</span><span class="p">),</span> <span class="s">&#39;Count&#39;</span><span class="p">,</span> <span class="s">&#39;Right Flank&#39;</span><span class="p">,</span> <span class="s">&#39;Count&#39;</span><span class="p">,</span> <span class="s">&#39;Left/Right Disparity&#39;</span> <span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sum_header</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">allflanks</span><span class="p">:</span>
+            <span class="n">lcount</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">flank_left</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span> <span class="p">;</span> <span class="n">rcount</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">flank_right</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_X </span><span class="si">%s</span><span class="s"> </span><span class="si">%d</span><span class="s"> </span><span class="si">%s</span><span class="s"> X_</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%d</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%d</span><span class="s"> </span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">lcount</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">rcount</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rcount</span> <span class="o">-</span> <span class="n">lcount</span><span class="p">))</span>  <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">adjacency</span><span class="o">==</span><span class="bp">True</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">#### Adjacency Matrix ####</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">delimiter</span> <span class="o">+</span> <span class="n">domain</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">allflanks</span><span class="p">:</span>
+            <span class="n">count</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">flank_left</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span> <span class="o">+</span> <span class="n">network</span><span class="o">.</span><span class="n">flank_right</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">count</span><span class="p">,</span> <span class="s">&#39;here&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">delimiter</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%d</span><span class="s"> </span><span class="se">\n</span><span class="s">&#39;</span> <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">count</span><span class="p">))</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+       <li><a href="../../contents.html">documentation </a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Adam Hughes.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
