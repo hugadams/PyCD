@@ -6,6 +6,8 @@
 Welcome to PyCD
 ===============
 
+PyCD is preliminary Python framework for performing protein domain analysis, particularly NCBI's `Conserved Domain Database`_.  This project stemmed from research at the George Washington University, the goal of which was to characterize lectin-binding domains in the purple sea urchin.  As such, it aims to provide both *scripts* and an *API* for conserved domain (CD) analysis.
+
 What's New:
 ----------
 
@@ -15,29 +17,33 @@ I finally created this site which is generously hosted by _GitHub.  The `source 
 
 .. _GitHub: https://github.com
 
-Quick Overview:
+
+On the Horizon
 --------------
 
-PyCD is preliminary Python framework for performing protein domain analysis, particularly NCBI's `Conserved Domain Database`_.  This project stemmed from research at the George Washington University, the goal of which was to characterize lectin-binding domains in the purple sea urchin.  As such, it aims to provide both *scripts* and an *API* for conserved domain (CD) analysis.
+* More integration with BioPython, especially sequence-based methods and Blast functionality.
+* An API and setup.py installation file for PyCD and PyRecords.
+* Full scripts for canned analysis routines.
+* TraitsUI interface for domain comparisons.
 
-Contents:
-========
+Check back soon for updates.
+
+Table of Contents
+=================
 
 .. toctree::
    :maxdepth: 2
 
    Tutorial/installation_dependencies.rst
    Tutorial/getting_started.rst
-   OnTheHorizon/on_the_horizon.rst
    API/pycd.rst
-
 
 
 .. _Conserved Domain Database: http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml
 
 
-Indices and tables
-==================
+Index and Search
+================
 
 * :ref:`genindex`
 * :ref:`modindex`
