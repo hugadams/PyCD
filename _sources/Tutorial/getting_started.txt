@@ -1,7 +1,9 @@
 Getting Started
 ===============
 
-The following sections will provide a brief introduction to the PyCD framework, with a more thorough tutorial coming soon.
+The following sections will provide a brief introduction to the PyCD framework, with a more thorough tutorial coming soon.  First, the basic data containers will be discussed, followed by direct and from-file instantiation.  Utilities for batch domain analysis are presented followed by integration with `BioPython's Seq. class`_.
+
+.. _BioPython's Seq. class: http://biopython.org/DIST/docs/api/Bio.Seq.Seq-class.html
 
 
 Data Storage: The (Conserved Domains Database) CDD Class
@@ -167,7 +169,7 @@ PyRecords offers a general *histogram()* function to count attribute value occur
    In [44]: hist['DomAccession'][0:3]
    Out[44]: (('cl09941', 82), ('cl11960', 43), ('cl09099', 27))
 
-If the slice notation of the histogram looks confusing, it is because the *histogram()* function is actually designed to accept multiple input fields.  Hence, multiple histograms can be generated simultaneously across attribute fields.  For example, below I will count occurrences for the Domain Acession field and PSSMID field simultaneously, and then output the PSSMID results.
+If the slice notation of the histogram looks confusing, it is because the *histogram()* function is actually designed to accept multiple input fields.  Hence, multiple histograms can be generated simultaneously across attribute fields.  For example, below I will count occurrences for the Domain Acession field and PSSMID field simultaneously, and then output the top three PSSMID results.
 
 .. sourcecode:: ipython
 
@@ -198,6 +200,53 @@ PyCD provides a *network_outfile()* function that outputs the network data as a 
 The output of *network_outfile()*, when read in directly to yEd_ (after tweaking a bit of yEd's options), yields the following plot using CLECT as a root node in an entire computationally-annotated proteome:
 
 .. image:: Tutorial_images/clect_adj.bmp
+
+Integration with BioPython Seq. Class
+-------------------------------------
+
+A special *sequence* field is reserved in the Domains CDD class for the protein sequence of an identified domain.  Although the NCBI CDD tool returns the *start* and *end* points along a sequence, it does not retain this information in the results.  Therefore, it is quite helpful to be able to reassign these, especially for downstream analysis like performing phylogenetics and sequence alignment on the identified domains.  
+
+Again, we will read in domains from a file.
+
+.. sourcecode:: ipython
+
+   In [73]: domains=from_cdd_file(domain_manager, 'TestData/TestSet.txt', warning=False)  
+   In [74]: domains[0]
+
+   Out[74]: DomainCDD(Query='Q#1', u1='-', Accession='>WHL22.684570.0'...)
+
+Now, we will read in a set of protein sequences using the *proteins_from_file()* function, which is merely a small wrapper for the *SeqIO.parse()* method of the in `BioPython Seq class`_.  
+
+.. _BioPython Seq class: http://biopython.org/DIST/docs/api/Bio.Seq.Seq-class.html
+
+.. sourcecode:: ipython
+
+   In [77]: proteins[0]
+   
+   Out[77]: SeqRecord(seq=Seq('MYHPACRPASLARFQRGLHSAVFNPKTSLQQGASCSSHHHGALSDRQHIDSRKH...TDL', ProteinAlphabet()), id='WHL22.684570.0', name='WHL22.684570.0', description='WHL22.684570.0 [86 - 1501]', dbxrefs=[])
+
+It is important to realize that BioPython sequences crop the '>' character from the Accession of a protein sequence.  To match this, we must envoke the *crop_accession()* function.
+
+
+In [79]: domains=crop_accession(domains)
+In [80]: domains[0].Accession
+
+Out[81]: 'WHL22.684570.0'
+
+*crop_accession()* is a small wrapper around a powerful pyrecords function, *alter_field*, which lets the user specify a field and function.  The function is then applied to all field members.  For *crop_accession()*, one merely is passing the string method, .strip('>'), to the field attribute 'Accession'.  The full call signature is shown below:
+
+.. sourcecode::
+    domains=[alter_field(domain, 'Accession', lambda x: x.strip('>') ) for domain in domains]
+
+Finally, we can assign the peptide sequence to the CDD domains batch.
+
+.. sourcecode:: ipython
+
+   In [83]: domains=assign_dom_seq(domains, proteins)
+   In [85]: domains[0].Start, domains[0].End, domains[0].sequence
+
+   Out[85]: (189, 410, Seq('WATVVATTFTLRFSLTLPLAIYSQNIRVRVENLQPEVIALAKRSFVERFAARAK...KIP', ProteinAlphabet()))
+
 
 
 

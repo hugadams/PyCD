@@ -9,9 +9,11 @@ Welcome to PyCD
 What's New:
 ----------
 
-Finally created this site and got it hosted on git.  The `source code`_ is available for download; however, the API is not in a tractable state.  I will address this soon so that others can easily use this package.  
+I finally created this site which is generously hosted by _GitHub.  The `source code`_ is available for download; however, the API is not in a tractable state.  I will address this soon so that others can easily use this package.  
 
 .. _source code: https://github.com/hugadams/PyCD
+
+.. _GitHub: https://github.com
 
 Quick Overview:
 --------------
@@ -26,10 +28,13 @@ Contents:
 
    Tutorial/installation_dependencies.rst
    Tutorial/getting_started.rst
+   OnTheHorizon/on_the_horizon.rst
    API/pycd.rst
 
 
+
 .. _Conserved Domain Database: http://www.ncbi.nlm.nih.gov/Structure/cdd/cdd.shtml
+
 
 Indices and tables
 ==================
