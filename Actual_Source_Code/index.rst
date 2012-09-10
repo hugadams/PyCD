@@ -11,7 +11,7 @@ PyCD is preliminary Python framework for performing protein domain analysis, par
 What's New:
 ----------
 
-I finally created this site which is generously hosted by _GitHub.  The `source code`_ is available for download; however, the API is not in a tractable state.  I will address this soon so that others can easily use this package.  
+I finally created this site which is generously hosted by GitHub_.  The `source code`_ is available for download; however, the API is not in a tractable state.  I will address this soon so that others can easily use this package.  
 
 .. _source code: https://github.com/hugadams/PyCD
 
